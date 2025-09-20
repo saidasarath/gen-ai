@@ -12,8 +12,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    password: '',
+    email: 'admin@interview.com',
+    password: 'password123',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { login, signup, loading } = useAuth();
@@ -41,8 +41,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
     }
 
     if (success) {
-      onSuccess();
+      console.log('Login successful, calling onSuccess');
+      // Add a small delay to ensure state is updated
+      setTimeout(() => {
+        onSuccess();
+      }, 200);
     } else {
+      console.log('Login failed');
       setErrors({ general: 'Authentication failed. Please try again.' });
     }
   };
@@ -72,6 +77,35 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
             {isLogin ? 'Sign in to your account' : 'Create your account'}
           </p>
         </div>
+
+        {/* Default Credentials Info */}
+        {isLogin && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="text-sm font-medium text-blue-900 mb-2">Default Login Credentials:</h3>
+            <div className="text-sm text-blue-800 space-y-1 mb-3">
+              <div><strong>Email:</strong> admin@interview.com</div>
+              <div><strong>Password:</strong> password123</div>
+            </div>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              loading={loading}
+            >
+              Quick Login
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                console.log('Direct login test');
+                onSuccess();
+              }}
+              className="w-full bg-green-600 hover:bg-green-700 mt-2"
+            >
+              Test Direct Login
+            </Button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
@@ -116,15 +150,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         </form>
 
         <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-blue-600 hover:text-blue-500 text-sm"
-          >
-            {isLogin
-              ? "Don't have an account? Sign up"
-              : 'Already have an account? Sign in'}
-          </button>
+          {isLogin ? (
+            <div className="text-sm text-gray-500">
+              <p>Registration is currently disabled.</p>
+              <p>Please use the default credentials above to sign in.</p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-blue-600 hover:text-blue-500 text-sm"
+            >
+              Already have an account? Sign in
+            </button>
+          )}
         </div>
       </Card>
     </div>

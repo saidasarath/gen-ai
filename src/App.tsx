@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from './hooks/useAuth';
-import { AuthForm } from './components/auth/AuthForm';
 import { Header } from './components/layout/Header';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { InterviewSession } from './components/interview/InterviewSession';
@@ -10,7 +8,6 @@ import { InterviewType } from './types';
 type AppState = 'dashboard' | 'interview' | 'results';
 
 function App() {
-  const { user, loading, isAuthenticated } = useAuth();
   const [appState, setAppState] = useState<AppState>('dashboard');
   const [selectedInterviewType, setSelectedInterviewType] = useState<InterviewType>('hr');
   const [sessionResults, setSessionResults] = useState<any>(null);
@@ -30,17 +27,18 @@ function App() {
     setSessionResults(null);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  // Skip authentication - go directly to dashboard
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  //     </div>
+  //   );
+  // }
 
-  if (!isAuthenticated) {
-    return <AuthForm onSuccess={() => {}} />;
-  }
+  // if (!isAuthenticated) {
+  //   return <AuthForm onSuccess={handleAuthSuccess} />;
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">

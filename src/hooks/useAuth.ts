@@ -9,28 +9,50 @@ export const useAuth = () => {
     // Check for existing session
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        console.log('Loaded user from localStorage:', userData);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock login - replace with actual authentication
+    // Default login credentials
+    const DEFAULT_EMAIL = 'admin@interview.com';
+    const DEFAULT_PASSWORD = 'password123';
+    
     try {
       setLoading(true);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      return true;
+      // Check credentials
+      if (email === DEFAULT_EMAIL && password === DEFAULT_PASSWORD) {
+        const defaultUser: User = {
+          id: '1',
+          email: DEFAULT_EMAIL,
+          name: 'Admin User',
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${DEFAULT_EMAIL}`,
+        };
+        
+        // Set user and localStorage
+        setUser(defaultUser);
+        localStorage.setItem('user', JSON.stringify(defaultUser));
+        console.log('Login successful, user set:', defaultUser);
+        
+        // Force a small delay to ensure state is updated
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        return true;
+      } else {
+        console.log('Login failed - invalid credentials');
+        return false;
+      }
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -40,21 +62,13 @@ export const useAuth = () => {
   };
 
   const signup = async (name: string, email: string, password: string): Promise<boolean> => {
-    // Mock signup - replace with actual registration
+    // Registration disabled - only default user allowed
     try {
       setLoading(true);
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const mockUser: User = {
-        id: Date.now().toString(),
-        email,
-        name,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      return true;
+      // Always return false for signup attempts
+      return false;
     } catch (error) {
       console.error('Signup error:', error);
       return false;
